@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sayak Sardar</title>
+<meta name="description" content="Sayak Sardar, B.Tech Electrical Engineering at IIT Kharagpur (2027). Applied ML, LLM agents and software engineering.">
+<meta property="og:title" content="Sayak Sardar · ML and Software Engineering">
+<meta property="og:description" content="Speech deepfake detection at Samsung Research, data-driven bioprocess design, LLM agents and full-stack apps.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Source+Sans+3:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one column, ~980px. Hero carries a speech waveform (the signal behind the SRIB work);
+   sections below read like a lab notebook: label in mono, heading, evidence with numbers. */
+:root {
+  --bg: #F5F7F6;
+  --surface: #FFFFFF;
+  --line: #D9E1DE;
+  --ink: #14201C;
+  --ink-2: #4A5A55;
+  --ink-3: #7A8985;
+  --accent: #0E7C6B;
+  --accent-soft: #DCEFEA;
+  --signal: #D9592A;
+  --f-display: "Sora", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0C1311; --surface: #121B18; --line: #24322E;
+    --ink: #E3ECE9; --ink-2: #A8B8B3; --ink-3: #74857F;
+    --accent: #3CC7A8; --accent-soft: #143A32; --signal: #F08A55;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0C1311; --surface: #121B18; --line: #24322E;
+  --ink: #E3ECE9; --ink-2: #A8B8B3; --ink-3: #74857F;
+  --accent: #3CC7A8; --accent-soft: #143A32; --signal: #F08A55;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--f-body); font-size: 18px; line-height: 1.6;
+  padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+a { color: var(--accent); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+.wrap { max-width: 980px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+
+nav.top { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+nav.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 12px; }
+.mark { font-family: var(--f-display); font-weight: 700; font-size: 17px; color: var(--ink); text-decoration: none; letter-spacing: -0.01em; }
+.mark span { color: var(--accent); }
+nav.top ul { list-style: none; display: flex; gap: 22px; margin: 0; padding: 0; font-size: 15px; }
+nav.top ul a { color: var(--ink-2); text-decoration: none; }
+nav.top ul a:hover { color: var(--ink); }
+
+header.hero { padding-block: 72px 40px; }
+.label { font-family: var(--f-mono); font-size: 12.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+h1 { font-family: var(--f-display); font-weight: 700; font-size: clamp(40px, 7vw, 68px); line-height: 1.02; letter-spacing: -0.03em; margin: 12px 0 18px; text-wrap: balance; }
+.lede { font-size: clamp(19px, 2.2vw, 22px); color: var(--ink-2); max-width: 36em; margin: 0; }
+.lede b { color: var(--ink); font-weight: 600; }
+.cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); text-decoration: none; font-weight: 600; font-size: 15.5px; cursor: pointer; font-family: inherit; }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.btn svg { width: 17px; height: 17px; flex: none; }
+
+.wave { margin-top: 44px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding-block: 14px; }
+.wave svg { display: block; width: 100%; height: 92px; }
+.wave .cap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-family: var(--f-mono); font-size: 12px; color: var(--ink-3); margin-top: 6px; }
+.wave .cap b { color: var(--signal); font-weight: 500; }
+
+section { padding-block: 56px; border-top: 1px solid var(--line); }
+h2 { font-family: var(--f-display); font-weight: 600; font-size: clamp(26px, 3.4vw, 34px); letter-spacing: -0.02em; margin: 8px 0 24px; text-wrap: balance; }
+h3 { font-family: var(--f-display); font-weight: 600; font-size: 21px; margin: 0; letter-spacing: -0.01em; }
+p { margin: 0 0 12px; }
+
+.feature { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 32px; align-items: start; }
+.feature .where { font-size: 15.5px; color: var(--ink-3); margin: 4px 0 14px; }
+.feature ul { margin: 0; padding-left: 20px; color: var(--ink-2); }
+.feature li { margin-bottom: 8px; }
+.feature li b { color: var(--ink); font-weight: 600; }
+.metrics { display: flex; flex-direction: column; gap: 14px; }
+.metric { border-left: 3px solid var(--accent); padding: 2px 0 2px 14px; }
+.metric .n { font-family: var(--f-display); font-weight: 700; font-size: 30px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.metric .n .from { color: var(--ink-3); font-weight: 500; font-size: 20px; }
+.metric .d { font-size: 14.5px; color: var(--ink-2); }
+.note { font-size: 14.5px; color: var(--ink-3); font-style: italic; margin-top: 10px; }
+.stack { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.stack span { font-family: var(--f-mono); font-size: 12px; padding: 3px 8px; border-radius: 5px; background: var(--accent-soft); color: var(--ink); }
+
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 22px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.card .kicker { font-family: var(--f-mono); font-size: 12px; color: var(--ink-3); }
+.card p { color: var(--ink-2); font-size: 16.5px; margin: 6px 0 0; }
+.card .links { margin-top: auto; padding-top: 14px; display: flex; gap: 16px; font-size: 15px; font-weight: 600; }
+.card .links a { text-decoration: none; }
+.card .links a:hover { text-decoration: underline; }
+.more { margin-top: 18px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 24px; }
+.more div { font-size: 16px; color: var(--ink-2); }
+.more a { font-weight: 600; }
+
+.skills { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 14px 24px; }
+.skills dt { font-family: var(--f-mono); font-size: 13px; color: var(--ink-3); padding-top: 3px; }
+.skills dd { margin: 0; }
+.edu { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px 24px; }
+.edu .yr { font-family: var(--f-mono); font-size: 14px; color: var(--ink-3); }
+
+.contact p { color: var(--ink-2); max-width: 34em; }
+.email { display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; font-family: var(--f-mono); font-size: 17px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin: 8px 0 18px; }
+.email span { user-select: all; }
+footer { padding-block: 32px 48px; font-size: 14px; color: var(--ink-3); border-top: 1px solid var(--line); }
+
+@media (max-width: 760px) {
+  body { font-size: 17px; }
+  nav.top ul { display: none; }
+  header.hero { padding-block: 44px 28px; }
+  .feature { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .metrics { flex-direction: row; flex-wrap: wrap; }
+  .metric { flex: 1 1 140px; }
+  .grid, .more { grid-template-columns: minmax(0, 1fr); }
+  .skills { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .skills dd { margin-bottom: 12px; }
+  section { padding-block: 44px; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<nav class="top" aria-label="Sections">
+  <div class="wrap">
+    <a class="mark" href="#top">sayak<span>.</span></a>
+    <ul>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="label">B.Tech · Electrical Engineering · IIT Kharagpur · 2027</div>
+    <h1>Sayak Sardar</h1>
+    <p class="lede">I take machine-learning models from research to production. At <b>Samsung Research</b> I built a speech deepfake detector small enough to deploy; for my thesis I built the dataset behind <b>BioAID</b>; on the side I build <b>LLM agents</b> and full-stack apps.</p>
+    <div class="cta">
+      <a class="btn primary" href="resume.pdf" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14"/></svg>Resume
+      </a>
+      <a class="btn" href="https://github.com/Sayak0504" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.29-1.69-1.29-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg>GitHub
+      </a>
+      <a class="btn" href="https://www.linkedin.com/in/sayaksardar04/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.75h4v11H3zm7 0h3.8v1.5h.06c.53-1 1.83-2.06 3.77-2.06 4.03 0 4.77 2.65 4.77 6.1v5.46h-4v-4.84c0-1.16-.02-2.64-1.6-2.64-1.62 0-1.86 1.26-1.86 2.56v4.92h-4z"/></svg>LinkedIn
+      </a>
+      <a class="btn" href="#contact">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Email
+      </a>
+    </div>
+    <div class="wave" aria-hidden="true">
+      <svg id="wave" viewBox="0 0 1000 92" preserveAspectRatio="none"></svg>
+      <div class="cap"><span>bona fide speech</span><b>synthetic segment flagged</b><span>equal error rate 17.8% → 5.8%</span></div>
+    </div>
+  </div>
+</header>
+
+<main>
+<section id="work">
+  <div class="wrap">
+    <div class="label">Research experience</div>
+    <h2>Detecting AI-generated speech that survives the real world</h2>
+    <div class="feature">
+      <div>
+        <h3>Audio deepfake detection</h3>
+        <div class="where">Samsung Research Institute Bangalore</div>
+        <ul>
+          <li>Distilled a <b>300M-parameter</b> self-supervised speech model into a <b>23.7M-parameter</b> student small enough to deploy.</li>
+          <li>Found that the model had learned the <b>recording channel</b>, not the synthesis. Broke the shortcut with <b>10K copy-synthesized</b> samples, which gave the largest single gain.</li>
+          <li>Exported to <b>ONNX with INT8</b> quantization, calibrated the threshold on the target score distribution, and fixed a quantization bug that flipped <b>37%</b> of decisions.</li>
+          <li>Explored a multi-stream design: DistilHuBERT with a Mel-spectrogram graph attention stream, supervised contrastive head and a decorrelation loss to stop redundant fusion.</li>
+        </ul>
+        <div class="stack"><span>PyTorch</span><span>HuBERT</span><span>Knowledge distillation</span><span>ONNX</span><span>INT8</span><span>ASVspoof</span></div>
+        <p class="note">The code is proprietary. I'm happy to walk through the design and results in an interview.</p>
+      </div>
+      <div class="metrics">
+        <div class="metric"><div class="n"><span class="from">17.8% →</span> 5.8%</div><div class="d">equal error rate on a real-world test set</div></div>
+        <div class="metric"><div class="n">12.7×</div><div class="d">smaller model (300M → 23.7M parameters)</div></div>
+        <div class="metric"><div class="n">37%</div><div class="d">of decisions were being flipped by the quantization bug I fixed</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="thesis">
+  <div class="wrap">
+    <div class="label">B.Tech thesis</div>
+    <h2>BioAID: learning how fermentation runs behave</h2>
+    <div class="feature">
+      <div>
+        <ul>
+          <li>No public dataset existed, so I built one: <b>176 isobutanol fermentation curves</b> digitised from <b>26 papers</b> across 7 host organisms, each traced back to the exact figure it came from.</li>
+          <li>Evaluated by leaving out <b>whole papers</b>, the honest test for a new lab. Showed that the process recipe alone can't beat the average curve on an unseen paper.</li>
+          <li>Added structured features for each strain's genetic engineering, which cut the median error in predicting final titre from <b>5.1× to 2.9×</b>.</li>
+          <li>Now building a neural model that predicts the full trajectory with uncertainty.</li>
+        </ul>
+        <div class="stack"><span>Python</span><span>PyTorch</span><span>scikit-learn</span><span>Gradient boosting</span><span>Time series</span></div>
+      </div>
+      <div class="metrics">
+        <div class="metric"><div class="n">176</div><div class="d">curves from 26 papers, built by hand</div></div>
+        <div class="metric"><div class="n"><span class="from">5.1× →</span> 2.9×</div><div class="d">median final-titre error on unseen papers</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap">
+    <div class="label">Projects</div>
+    <h2>Things I've built</h2>
+    <div class="grid">
+      <article class="card">
+        <div class="kicker">Full stack · LLM features</div>
+        <h3>OPIGS</h3>
+        <p>A placement portal for students, recruiters, alumni and the placement office. JWT login with role-based access, a five-stage application pipeline with an event log, per-student LaTeX CV generation, and a Gemini assistant that knows the student's CV and applications.</p>
+        <div class="stack"><span>FastAPI</span><span>React</span><span>SQLAlchemy</span><span>LaTeX</span><span>Gemini</span></div>
+        <div class="links"><a href="https://github.com/Sayak0504/OPIGS" target="_blank" rel="noopener">Code →</a></div>
+      </article>
+      <article class="card">
+        <div class="kicker">Hackathon · team lead</div>
+        <h3>ANCHOR</h3>
+        <p>Kharagpur Data Science Hackathon 2026, team of three. Decides whether a character's backstory is consistent with a full novel, combining retrieval over the book with LLM reasoning in an agent pipeline.</p>
+        <div class="stack"><span>Python</span><span>LangGraph</span><span>RAG</span><span>LLMs</span></div>
+        <div class="links"><a href="https://github.com/Sayak0504/ANCHOR" target="_blank" rel="noopener">Code →</a></div>
+      </article>
+      <article class="card">
+        <div class="kicker">C++ · OOP · search</div>
+        <h3>Rubik's Cube Solver</h3>
+        <p>Three cube representations (3D array, 1D array and a bitboard) behind one abstract class, with templated BFS, DFS, IDDFS and IDA*-style solvers guided by a corner pattern database.</p>
+        <div class="stack"><span>C++</span><span>Templates</span><span>IDA*</span><span>Bitboards</span></div>
+        <div class="links"><a href="https://github.com/Sayak0504/Rubiks-Cube-Solver" target="_blank" rel="noopener">Code →</a></div>
+      </article>
+      <article class="card">
+        <div class="kicker">NLP · search</div>
+        <h3>DSA Search Engine</h3>
+        <p>Semantic search over 1,000 curated LeetCode problems. Each problem becomes the average of its skip-gram Word2Vec vectors, and a Flask app returns the closest matches to a query.</p>
+        <div class="stack"><span>Python</span><span>gensim</span><span>Flask</span></div>
+        <div class="links"><a href="https://github.com/Sayak0504/DSA-Search-engine" target="_blank" rel="noopener">Code →</a></div>
+      </article>
+    </div>
+    <div class="more">
+      <div><a href="https://github.com/Sayak0504/Hospital-Queue-Management" target="_blank" rel="noopener">Hospital Queue Management</a>: Flask and PostgreSQL patient records with bcrypt login and email alerts on report upload.</div>
+      <div><a href="https://github.com/Sayak0504?tab=repositories" target="_blank" rel="noopener">All repositories →</a></div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <div class="label">Toolbox</div>
+    <h2>Skills</h2>
+    <dl class="skills">
+      <dt>Languages</dt><dd>Python, C++, C, SQL, JavaScript</dd>
+      <dt>Machine learning</dt><dd>PyTorch, Hugging Face Transformers, scikit-learn, knowledge distillation, quantization (ONNX, INT8), evaluation design</dd>
+      <dt>LLMs and agents</dt><dd>RAG, LangChain, LangGraph, prompt design, Gemini API</dd>
+      <dt>Software</dt><dd>FastAPI, Flask, React, REST APIs, PostgreSQL, SQLite, Git, Linux</dd>
+      <dt>Foundations</dt><dd>Data structures and algorithms, object-oriented design, DBMS, operating systems, probability and linear algebra</dd>
+    </dl>
+  </div>
+</section>
+
+<section id="education">
+  <div class="wrap">
+    <div class="label">Education</div>
+    <div class="edu">
+      <div><h3>Indian Institute of Technology Kharagpur</h3><div style="color:var(--ink-2)">B.Tech, Electrical Engineering</div></div>
+      <div class="yr">2023 – 2027</div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="contact">
+  <div class="wrap">
+    <div class="label">Contact</div>
+    <h2>Let's talk</h2>
+    <p>I'm looking for Software Engineering and ML / Data / AI roles starting in 2027. Email is the fastest way to reach me.</p>
+    <div class="email"><span id="mail">sayaksardar04@gmail.com</span><button class="btn" id="copy" type="button">Copy</button></div>
+    <div class="cta" style="margin-top:0">
+      <a class="btn" href="mailto:sayaksardar04@gmail.com">Write an email</a>
+      <a class="btn" href="https://github.com/Sayak0504" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn" href="https://www.linkedin.com/in/sayaksardar04/" target="_blank" rel="noopener">LinkedIn</a>
+      <a class="btn" href="resume.pdf" target="_blank" rel="noopener">Resume (PDF)</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap">© 2026 Sayak Sardar · Built by hand, hosted on GitHub Pages.</div></footer>
+
+<script>
+(function () {
+  // Speech-like waveform: syllable envelopes over a carrier; the middle stretch is drawn in the
+  // signal colour as the "synthetic" segment the detector flags.
+  var svg = document.getElementById("wave"); if (!svg) return;
+  var N = 260, W = 1000, H = 92, mid = H / 2, bars = "";
+  var seed = 7; function rnd() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+  for (var i = 0; i < N; i++) {
+    var t = i / N;
+    var env = Math.pow(Math.abs(Math.sin(t * Math.PI * 11)), 1.6) * (0.55 + 0.45 * Math.sin(t * 7.3 + 1));
+    var amp = Math.max(0.04, env * (0.55 + 0.45 * rnd())) * (mid - 4);
+    var x = (i + 0.5) * (W / N);
+    var fake = t > 0.56 && t < 0.74;
+    bars += '<line x1="' + x.toFixed(1) + '" x2="' + x.toFixed(1) + '" y1="' + (mid - amp).toFixed(1) + '" y2="' + (mid + amp).toFixed(1) + '" stroke="var(' + (fake ? "--signal" : "--ink-3") + ')" stroke-width="2" stroke-linecap="round" opacity="' + (fake ? 1 : 0.55) + '"/>';
+  }
+  bars += '<rect x="' + (0.56 * W) + '" y="1" width="' + (0.18 * W) + '" height="' + (H - 2) + '" fill="none" stroke="var(--signal)" stroke-dasharray="4 4" rx="6"/>';
+  svg.innerHTML = bars;
+  var b = document.getElementById("copy");
+  b.addEventListener("click", function () {
+    var txt = document.getElementById("mail").textContent;
+    var done = function () { b.textContent = "Copied"; setTimeout(function () { b.textContent = "Copy"; }, 1600); };
+    if (navigator.clipboard) navigator.clipboard.writeText(txt).then(done, function () { selectIt(); });
+    else selectIt();
+    function selectIt() { var r = document.createRange(); r.selectNodeContents(document.getElementById("mail")); var s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "Press Ctrl+C"; }
+  });
+})();
+</script>
+</body>
+</html>
